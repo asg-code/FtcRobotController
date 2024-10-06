@@ -202,7 +202,7 @@ public class PinpointOdometryRobot {
             Request a bulk update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
         */
-        pinpointOdo.bulkUpdate();
+        pinpointOdo.update();
 
         Pose2D pos = pinpointOdo.getPosition();
 
@@ -223,17 +223,20 @@ public class PinpointOdometryRobot {
         strafeDistance = (rawStrafeOdometer - strafeOdometerOffset);
 
         // Convert heading from radians to degrees
-        //rawHeading  = pos.getHeading(AngleUnit.DEGREES);
+        rawHeading  = pos.getHeading(AngleUnit.DEGREES);
 
-        //heading     = rawHeading - headingOffset;
-        //turnRate    = pinpointOdo.getHeadingVelocity();
-
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
-
-        rawHeading  = orientation.getYaw(AngleUnit.DEGREES);
         heading     = rawHeading - headingOffset;
-        turnRate    = angularVelocity.zRotationRate;
+        turnRate    = pinpointOdo.getHeadingVelocity();
+
+        // Convert turn rate from radians per second to degrees per second
+        turnRate = turnRate * 180.0 / Math.PI;
+
+        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        //AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+
+        //rawHeading  = orientation.getYaw(AngleUnit.DEGREES);
+        //heading     = rawHeading - headingOffset;
+        //turnRate    = angularVelocity.zRotationRate;
 
         data = String.format(Locale.US, "[I] Imu heading: %.3f, turn rate: %.3f", heading, turnRate);
         Log.println(Log.INFO, "Turn Telemetry", data);

@@ -133,7 +133,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             Request a bulk update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
              */
-            odo.bulkUpdate();
+            odo.update();
 
 
             if (gamepad1.a){
